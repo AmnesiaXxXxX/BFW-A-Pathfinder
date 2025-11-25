@@ -1,15 +1,13 @@
-repo = ghcr.io/amnesiaxxxxx/bfw-a-pathfinder:latest
+IMAGE_NAME ?= ghcr.io/amnesiaxxxxx/bfw-a-pathfinder:latest
 
-.PHONY: build push run
+.PHONY: build push run check install-deps pycheck
 
 build:
-	docker build -t $(repo) .
+	docker build -t $(IMAGE_NAME) .
 
 push:
-	docker buildx build --platform linux/amd64 -t $(repo) . --push
+	docker buildx build --platform linux/amd64 -t $(IMAGE_NAME) . --push
 
-check:
-	docker build -t $(repo) . --check
 install-deps:
 	pip install --upgrade pip \
 		&& pip install uv \
@@ -17,6 +15,7 @@ install-deps:
 
 pycheck:
 	uv run pylint -f=github --recursive=y src/ main.py
+
 run:
 	docker run --rm -it \
 		-e DISPLAY=$$DISPLAY \
@@ -24,4 +23,4 @@ run:
 		--cpus="4" \
 		--device /dev/dri:/dev/dri \
 		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		$(repo)
+		$(IMAGE_NAME)
