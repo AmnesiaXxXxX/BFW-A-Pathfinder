@@ -1,0 +1,21 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run install-deps
+        run: make install-deps
+      - name: Run pylint
+        run: make pycheck
+
+      - name: Run Dockerfile check
+        run: make check

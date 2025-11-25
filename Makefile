@@ -8,6 +8,15 @@ build:
 push:
 	docker buildx build --platform linux/amd64 -t $(repo) . --push
 
+check:
+	docker build -t $(repo) . --check
+install-deps:
+	pip install --upgrade pip \
+		&& pip install uv \
+		&& uv sync --frozen
+
+pycheck:
+	uv run pylint -f=github --recursive=y src/ main.py
 run:
 	docker run --rm -it \
 		-e DISPLAY=$$DISPLAY \
