@@ -14,8 +14,8 @@ Abstract_Grid_Type = Tuple[int, int]
 
 
 class AbstractObject(ABC):
-    _path_cache: Dict[Tuple[int, int, int, int], List[Tuple[int, int]]] = {}
-    _path_cache_lock = Lock()
+    path_cache: Dict[Tuple[int, int, int, int], List[Tuple[int, int]]] = {}
+    path_cache_lock = Lock()
 
     def __new__(cls, *args, **kwargs) -> Self:
         obj = super().__new__(cls)
@@ -41,8 +41,8 @@ class AbstractObject(ABC):
     @classmethod
     def clear_path_cache(cls) -> None:
         """Сбросить кеш путей (например, при регенерации лабиринта)."""
-        with cls._path_cache_lock:
-            cls._path_cache.clear()
+        with cls.path_cache_lock:
+            cls.path_cache.clear()
 
     def update_pixel_pos(self, cell_size: int) -> None:
         """Обновляем пиксельную позицию (центр клетки) на основании grid_x/grid_y."""
@@ -80,8 +80,8 @@ class AbstractObject(ABC):
 
             # --- 1. Проверка кеша пути ---
             cache_key = (start[0], start[1], goal[0], goal[1])
-            with obj._path_cache_lock:
-                cached = obj._path_cache.get(cache_key)
+            with obj.path_cache_lock:
+                cached = obj.path_cache.get(cache_key)
             if cached is not None:
                 obj.path = cached
                 return
@@ -149,8 +149,8 @@ class AbstractObject(ABC):
             obj.path = path
 
             # --- 6. Сохраняем в кеш ---
-            with obj._path_cache_lock:
-                obj._path_cache[cache_key] = path
+            with obj.path_cache_lock:
+                obj.path_cache[cache_key] = path
 
         # Превращаем *objects в tuple, чтобы его можно было захватывать в замыкание
         objects_tuple = tuple(objects)
